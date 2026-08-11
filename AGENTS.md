@@ -1,0 +1,37 @@
+# Polytech Development Guidelines
+
+## 1. Styling Constraints
+- **NO Inline Styles**: Do not use `style={{ ... }}` attributes under any circumstance.
+- **CSS Modules Only**: Use `.module.css` files and import them as `styles` (e.g., `className={styles.container}`).
+
+## 2. Internationalization (i18n)
+- **NO Raw Strings**: All user-facing texts must go through the `t()` translation function.
+- **Locale Completeness**: Every time new keys are added to `en.json`, they must be translated and added to all other locales (`ar.json`, `de.json`, `es.json`, `fr.json`, `he.json`, `id.json`, `pt.json`, `ru.json`).
+
+## 3. Interaction Constraints
+- **NO Browser Alerts**: Never use native `alert()`, `confirm()`, or `prompt()` popups.
+- **Use Modals/Alert Context**: Always use the application's premium custom modals or alert banners (e.g., `useAlert()` context's `showAlert()`).
+
+## 4.Package Manager
+- always use pnpm
+
+## 5. Testing
+- use jest for unit testing after everything you develop.
+- use playwright for e2e testing after everything you develop.
+
+## 6. Oxlint
+- always run oxlint --fix after everything you develop.
+
+## 7. Magic Strings and Numbers
+- never use magic strings or numbers.
+- use constants instead.
+
+## 8. API Documentation
+- always use postman for API documentation.
+- always update the postman documentation after everything you develop.
+- always create an updated newman file for a full e2e in the postman collection.
+
+## 9. Type safety
+- always use types and interfaces to ensure type safety.
+- never use any without consulting the develoepr
+- use ` pnpm tsc --noEmit` to run type checking on every file you change.

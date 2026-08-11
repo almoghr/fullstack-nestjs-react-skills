@@ -1,0 +1,22 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { expect, test, describe } from 'vitest';
+import { CustomExample } from './CustomExample';
+
+// Add jest-axe matchers
+expect.extend(toHaveNoViolations);
+
+describe('CustomExample Component', () => {
+  test('renders correctly with translated text', () => {
+    // Note: ensure you wrap with I18nextProvider or mock translation in setup.ts
+    render(<CustomExample />);
+    expect(screen.getByRole('heading')).toBeInTheDocument();
+  });
+
+  test('should have no accessibility violations (a11y)', async () => {
+    const { container } = render(<CustomExample />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});

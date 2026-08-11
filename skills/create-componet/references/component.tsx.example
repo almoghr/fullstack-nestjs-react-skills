@@ -1,0 +1,28 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import styles from './CustomExample.module.css';
+
+export interface CustomExampleProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Optional title key for internationalization */
+  titleKey?: string;
+  /** React 19 forward ref directly via prop */
+  ref?: React.Ref<HTMLDivElement>;
+}
+
+export const CustomExample = ({ 
+  titleKey = 'common.example', 
+  className = '', 
+  ref, 
+  ...props 
+}:CustomExampleProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <div ref={ref} className={`${styles.container} ${className}`} {...props}>
+      <h2 className={styles.title}>{t(titleKey)}</h2>
+      {/* Component implementation */}
+    </div>
+  );
+};
+
+// DO NOT use default export unless strictly necessary (e.g., lazy loading).
