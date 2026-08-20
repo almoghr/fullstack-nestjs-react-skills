@@ -74,13 +74,20 @@ After scaffolding completes:
    .agents/skills/setup-ci-workflow/scripts/generate-ci-workflow.sh <client_dir>
    ```
 
-3. **Repository Secrets (Manage GitHub Secrets Skill)**:
+3. **Automated CD Setup (Setup CD Workflow Skill)**:
+   Ask the user if they want to configure Continuous Deployment (CD) for the projects. If yes, invoke:
+   ```bash
+   .agents/skills/setup-cd-workflow/scripts/generate-cd-workflow.sh <target_dir> <platform>
+   ```
+   *Note: This skill will guide the user through selecting the hosting platform (e.g., Vercel, Fly.io) and setting up necessary secrets.*
+
+4. **Repository Secrets (Manage GitHub Secrets Skill)**:
    Ask the user if any environment/repository secrets need to be configured for free-tier orgs, and invoke:
    ```bash
    .agents/skills/manage-github-secrets/scripts/set-repo-secrets.sh <owner/repo> <SECRET_KEY> <SECRET_VALUE>
    ```
    *Note: All secret values MUST be logged as `[REDACTED]` in output.*
 
-4. **Verify Setup**:
+5. **Verify Setup**:
    - Check TypeScript compilation (`pnpm tsc --noEmit` if available).
-   - Commit and push initial code with `.github/workflows/ci.yml`.
+   - Commit and push initial code with `.github/workflows/ci.yml` and `.github/workflows/cd.yml`.

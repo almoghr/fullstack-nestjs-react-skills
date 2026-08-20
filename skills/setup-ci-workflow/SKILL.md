@@ -79,3 +79,9 @@ After generating `.github/workflows/ci.yml`:
    git commit -m "ci: add generic sequential CI pipeline"
    ```
 2. Push to GitHub to trigger CI on `main`/`master` or Pull Requests.
+
+## 4. Next Steps (Continuous Deployment)
+
+If the user wants to automatically deploy their application after a successful CI build, recommend the **Setup CD Workflow** skill:
+- Let the user know they can set up Continuous Deployment (CD) for platforms like Vercel, Fly.io, Render, Railway, or Docker.
+- Ask: *Would you like me to set up a CD pipeline using the `setup-cd-workflow` skill?*
