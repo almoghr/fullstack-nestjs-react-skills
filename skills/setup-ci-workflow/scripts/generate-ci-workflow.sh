@@ -88,10 +88,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - uses: actions/setup-node@v7
         with:
           node-version: 24
-        continue-on-error: true
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile || pnpm install || true
       - run: ${LINT_CMD}
 
   unit-test:
@@ -100,6 +104,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile || pnpm install || true
       - run: ${UNIT_TEST_CMD}
 
   e2e-test:
@@ -108,6 +120,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile || pnpm install || true
       - run: ${E2E_CMD}
 
   build:
@@ -116,6 +136,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile || pnpm install
       - run: ${BUILD_CMD}
 
   ci-summary:
