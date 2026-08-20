@@ -58,14 +58,29 @@ Run the non-interactive scaffolding script to generate local codebase structure 
 
 ---
 
-## 4. Post-Setup & Git Initialization
+## 4. Post-Setup, CI Workflow & Secrets Integration
 
 After scaffolding completes:
-1. Initialize local git repository if not done:
+1. **Initialize Local Git Repositories**:
    ```bash
    cd <owner>-<project>-backend && git init && git remote add origin git@github.com:<owner>/<owner>-<project>-backend.git
    cd ../<owner>-<project>-client && git init && git remote add origin git@github.com:<owner>/<owner>-<project>-client.git
    ```
-2. Verify setup:
-   - Check TypeScript compilation (`pnpm tsc --noEmit` if available)
-   - Ensure initial commit can be pushed to remote repositories.
+
+2. **Automated CI Setup (Setup CI Workflow Skill)**:
+   Automatically generate sequential GitHub Actions CI pipelines (`Lint -> Unit Test -> E2E Test -> Build -> Summary Report`) by executing:
+   ```bash
+   .agents/skills/setup-ci-workflow/scripts/generate-ci-workflow.sh <backend_dir>
+   .agents/skills/setup-ci-workflow/scripts/generate-ci-workflow.sh <client_dir>
+   ```
+
+3. **Repository Secrets (Manage GitHub Secrets Skill)**:
+   Ask the user if any environment/repository secrets need to be configured for free-tier orgs, and invoke:
+   ```bash
+   .agents/skills/manage-github-secrets/scripts/set-repo-secrets.sh <owner/repo> <SECRET_KEY> <SECRET_VALUE>
+   ```
+   *Note: All secret values MUST be logged as `[REDACTED]` in output.*
+
+4. **Verify Setup**:
+   - Check TypeScript compilation (`pnpm tsc --noEmit` if available).
+   - Commit and push initial code with `.github/workflows/ci.yml`.
