@@ -1,0 +1,39 @@
+import { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { PAGE_I18N_KEYS, PAGE_ROUTES, DEFAULT_PAGE_LIMIT } from './constants/example-page.constants';
+import type { ExamplePageItem, ExampleFilterState } from './types/example-page.types';
+import { CustomPageHeader } from './components/CustomPageHeader/CustomPageHeader';
+import { CustomDataTable } from './components/CustomDataTable/CustomDataTable';
+import styles from './ExamplePage.module.css';
+
+export const ExamplePage = () => {
+  const { t } = useTranslation();
+  const [isPending, startTransition] = useTransition();
+  const [items, setItems] = useState<ExamplePageItem[]>([]);
+  const [filters, setFilters] = useState<ExampleFilterState>({
+    searchTerm: '',
+    limit: DEFAULT_PAGE_LIMIT,
+  });
+
+  const handleSearchChange = (searchTerm: string) => {
+    startTransition(() => {
+      setFilters((prev) => ({ ...prev, searchTerm }));
+    });
+  };
+
+  return (
+    <main className={styles.pageContainer}>
+      <CustomPageHeader
+        titleKey={PAGE_I18N_KEYS.PAGE_TITLE}
+        subtitleKey={PAGE_I18N_KEYS.PAGE_SUBTITLE}
+      />
+      <section className={styles.contentSection}>
+        <CustomDataTable
+          items={items}
+          isLoading={isPending}
+          emptyMessageKey={PAGE_I18N_KEYS.EMPTY_STATE}
+        />
+      </section>
+    </main>
+  );
+};
