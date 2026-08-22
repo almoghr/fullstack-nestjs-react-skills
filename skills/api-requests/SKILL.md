@@ -1,11 +1,11 @@
 ---
 name: API Requests & TanStack Query
-description: Standardizes frontend API architecture using Axios, TanStack Query (@tanstack/react-query), centralized API service modules, subject-based custom query/mutation hooks, and strictly managed query key constants.
+description: Standardizes frontend API architecture using Axios, TanStack Query (@tanstack/react-query), centralized API service modules, subject-based custom query/mutation hooks, strictly managed query key constants, and mandatory unit tests for every query/mutation hook.
 ---
 
 # API Requests & TanStack Query Skill
 
-This skill defines the mandatory workflow and architecture for managing HTTP requests, server state, data fetching, mutations, and caching across frontend applications.
+This skill defines the mandatory workflow and architecture for managing HTTP requests, server state, data fetching, mutations, caching, and unit testing across frontend applications.
 
 ---
 
@@ -126,14 +126,16 @@ src/hooks/
 │   ├── useUserDetailQuery.ts        # Fetch single user
 │   ├── useCreateUserMutation.ts     # Create user mutation + invalidation
 │   ├── useUpdateUserMutation.ts     # Update user mutation + invalidation
-│   └── useDeleteUserMutation.ts     # Delete user mutation + invalidation
+│   ├── useDeleteUserMutation.ts     # Delete user mutation + invalidation
+│   └── user-hooks.test.tsx          # Comprehensive unit tests for all user hooks
 ├── system-categories/
 │   ├── system-category-queries.constants.ts
 │   ├── useSystemCategoriesQuery.ts
 │   ├── useCategoryOptionsQuery.ts
 │   ├── useCreateCategoryMutation.ts
 │   ├── useAddCategoryOptionMutation.ts
-│   └── useReorderOptionsMutation.ts
+│   ├── useReorderOptionsMutation.ts
+│   └── system-category-hooks.test.tsx # Comprehensive unit tests for all category hooks
 ```
 
 ### 4.2 Query Hook Example
@@ -175,7 +177,109 @@ export function useCreateUserMutation() {
 
 ---
 
-## 5. Consumption in React Components
+## 5. Mandatory Unit Testing for Every Query & Mutation Hook
+
+**EVERY query hook and mutation hook MUST have unit test coverage.** No hook should be created or modified without accompanying unit tests in `src/hooks/<subject>/[subject]-hooks.test.tsx` (or `[hookName].test.tsx`).
+
+### 5.1 Test Wrapper Setup
+Create a reusable query client wrapper for `renderHook`:
+```tsx
+import type { ReactNode } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+export function createQueryWrapper() {
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false, // Disable retries in tests for fast deterministic assertions
+        gcTime: 0,
+      },
+      mutations: {
+        retry: false,
+      },
+    },
+  });
+
+  return {
+    queryClient,
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+    ),
+  };
+}
+```
+
+### 5.2 Testing Query Hooks
+Verify successful data retrieval, loading states, and error handling:
+```tsx
+// Example: Testing useUsersQuery
+import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+import { usersApi } from '../../services/api/users.api';
+import { useUsersQuery } from './useUsersQuery';
+import { createQueryWrapper } from '../../test/test-utils';
+
+vi.mock('../../services/api/users.api');
+
+describe('useUsersQuery', () => {
+  it('fetches and returns users list successfully', async () => {
+    const mockUsers = [{ id: '1', email: 'user@example.com', roles: [] }];
+    vi.mocked(usersApi.getAll).mockResolvedValueOnce(mockUsers);
+
+    const { wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => useUsersQuery(), { wrapper });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(mockUsers);
+    expect(usersApi.getAll).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles query error gracefully', async () => {
+    vi.mocked(usersApi.getAll).mockRejectedValueOnce(new Error('Network error'));
+
+    const { wrapper } = createQueryWrapper();
+    const { result } = renderHook(() => useUsersQuery(), { wrapper });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe('Network error');
+  });
+});
+```
+
+### 5.3 Testing Mutation Hooks & Cache Invalidation
+Verify mutation execution and query cache invalidation:
+```tsx
+// Example: Testing useCreateUserMutation
+describe('useCreateUserMutation', () => {
+  it('calls create user API and invalidates users list cache on success', async () => {
+    const newUser = { id: '2', email: 'new@example.com', roles: [] };
+    vi.mocked(usersApi.create).mockResolvedValueOnce(newUser);
+
+    const { queryClient, wrapper } = createQueryWrapper();
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+    const { result } = renderHook(() => useCreateUserMutation(), { wrapper });
+
+    result.current.mutate({
+      email: 'new@example.com',
+      password: 'password123',
+      roles: [],
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(newUser);
+    expect(invalidateSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        queryKey: expect.arrayContaining(['users', 'list']),
+      })
+    );
+  });
+});
+```
+
+---
+
+## 6. Consumption in React Components
 
 Components must use the custom hooks directly for clean separation of concerns and reactivity:
 
@@ -205,7 +309,7 @@ export const AdminUsersPage = () => {
 
 ---
 
-## 6. Summary Checklist for Agent Execution
+## 7. Summary Checklist for Agent Execution
 
 1. **Verify Dependencies**: Check if `@tanstack/react-query` and `axios` are installed at latest version; ask user if not.
 2. **Setup Provider**: Verify `QueryClientProvider` is configured in the root tree.
@@ -213,4 +317,5 @@ export const AdminUsersPage = () => {
 4. **Define Query Keys**: Create a constants file with key factory methods next to the hooks.
 5. **Implement Custom Hooks**: Wrap queries and mutations in dedicated hooks under `src/hooks/<subject>/`.
 6. **Automatic Invalidation**: Ensure mutations invalidate relevant query keys on success.
-7. **Component Usage**: Consume only through the custom hooks, never calling raw API functions inside components.
+7. **MANDATORY Unit Tests for Every Query/Mutation**: Implement unit tests for all queries and mutations covering success, failure, and cache invalidation.
+8. **Component Usage**: Consume only through the custom hooks, never calling raw API functions inside components.
