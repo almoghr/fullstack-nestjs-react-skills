@@ -35,3 +35,10 @@
 - always use types and interfaces to ensure type safety.
 - never use any without consulting the develoepr
 - use ` pnpm tsc --noEmit` to run type checking on every file you change.
+
+## 10. Client Component Length
+- no component shall overpass 300 lines.
+- if a component overpasses 300 lines, split it into smaller components.
+- if splitting into smaller components you have to create tests for each new component.
+- make sure the parent component still works as expected after splitting.
+- is splitting to components is not right logically in a specific component, take out all the logic of the functions outside to a utility functions file and use it in the component. the utility function file should be in the directory with the component itself.
