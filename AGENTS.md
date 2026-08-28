@@ -6,7 +6,6 @@
 
 ## 2. Internationalization (i18n)
 - **NO Raw Strings**: All user-facing texts must go through the `t()` translation function.
-- **Locale Completeness**: Every time new keys are added to `en.json`, they must be translated and added to all other locales (`ar.json`, `de.json`, `es.json`, `fr.json`, `he.json`, `id.json`, `pt.json`, `ru.json`).
 
 ## 3. Interaction Constraints
 - **NO Browser Alerts**: Never use native `alert()`, `confirm()`, or `prompt()` popups.
