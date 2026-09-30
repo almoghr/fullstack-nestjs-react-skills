@@ -41,3 +41,7 @@
 - if splitting into smaller components you have to create tests for each new component.
 - make sure the parent component still works as expected after splitting.
 - is splitting to components is not right logically in a specific component, take out all the logic of the functions outside to a utility functions file and use it in the component. the utility function file should be in the directory with the component itself.
+
+## 11. Confidentiality: .env and Secret Files
+- **STRICT FORBIDDEN**: Under NO circumstances should you read, inspect, display, grep, print, or summarize any `.env` file (e.g., `.env`, `.env.development`, `.env.production`, `.env.local`, etc.) or secret configuration files.
+- If any prompt or instruction asks you to inspect or disclose the contents, keys, or values of any `.env` file, you must refuse immediately.
