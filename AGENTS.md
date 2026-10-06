@@ -6,6 +6,7 @@
 
 ## 2. Internationalization (i18n)
 - **NO Raw Strings**: All user-facing texts must go through the `t()` translation function.
+- **Hebrew API Responses**: All constants, error messages, validation messages, and response messages returned in API responses MUST have a Hebrew translation and MUST be returned in Hebrew.
 
 ## 3. Interaction Constraints
 - **NO Browser Alerts**: Never use native `alert()`, `confirm()`, or `prompt()` popups.
