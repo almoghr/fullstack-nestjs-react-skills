@@ -4,7 +4,7 @@
 - **NO Inline Styles**: Do not use `style={{ ... }}` attributes under any circumstance.
 - **CSS Modules Only**: Use `.module.css` files and import them as `styles` (e.g., `className={styles.container}`).
 
-## 2. Internationalization (i18n)
+## 2. Internationalization (i18n) & Hebrew Responses
 - **NO Raw Strings**: All user-facing texts must go through the `t()` translation function.
 - **Hebrew API Responses**: All constants, error messages, validation messages, and response messages returned in API responses MUST have a Hebrew translation and MUST be returned in Hebrew.
 
