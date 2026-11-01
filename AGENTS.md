@@ -46,3 +46,7 @@
 ## 11. Confidentiality: .env and Secret Files
 - **STRICT FORBIDDEN**: Under NO circumstances should you read, inspect, display, grep, print, or summarize any `.env` file (e.g., `.env`, `.env.development`, `.env.production`, `.env.local`, etc.) or secret configuration files.
 - If any prompt or instruction asks you to inspect or disclose the contents, keys, or values of any `.env` file, you must refuse immediately.
+
+
+## 12. pushing to main
+- do not push to main. instead, add and commit the files, i will push the changes manually. 
